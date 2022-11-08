@@ -23,6 +23,7 @@ from grid_control.utils.parsing import parse_time
 from grid_control.utils.process_base import LocalProcess
 from python_compat import identity, ifilter, izip, lmap
 
+import time
 
 class PBSDiscoverNodes(BackendDiscovery):
 	def __init__(self, config):
@@ -122,4 +123,7 @@ class PBS(PBSGECommon):  # pylint:disable=too-many-ancestors
 			params += ' -q %s' % reqs[WMS.QUEUES][0]
 		if reqs.get(WMS.SITES):
 			params += ' -l host=%s' % str.join('+', reqs[WMS.SITES])
+		if reqs.get(WMS.WALLTIME):
+			td = time.strftime("%H:%M:%S", time.gmtime(reqs[WMS.WALLTIME]))
+			params += ' -l walltime={}'.format( str(td))
 		return params
